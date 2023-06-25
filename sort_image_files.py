@@ -1,31 +1,27 @@
 import os
-from PIL import Image
+import re
+import shutil
 
-# lista todos os arquivos do diretório
-path_a = '../dataset/5dataset_balanced_raw'
-path_b = '.'
+# Diretório contendo os arquivos JPEG
+diretorio = 'C:/Users/Weback/Documents/estevan/centelha/landing_page'
 
-files_a = os.listdir(path_a)
+# Expressão regular para extrair o número dos arquivos
+padrao_numero = re.compile(r'\d+')
 
-# ordena os arquivos em ordem alfabética
-files_a.sort()
+# Lista de arquivos JPEG no diretório
+arquivos_jpeg = [arquivo for arquivo in os.listdir(diretorio) if arquivo.lower().endswith('.jpeg')]
 
-# percorre cada arquivo
-for i, file in enumerate(files_a):
+# Função para extrair o número do nome do arquivo
+def extrair_numero(nome_arquivo):
+    numero = padrao_numero.search(nome_arquivo)
+    return int(numero.group()) if numero else -1
 
-    # verifica se o arquivo é uma imagem
-    #if file.endswith(('.jpg', '.jpeg', '.png', '.bmp', '.JPEG')):
+# Ordenar arquivos com base nos números extraídos
+arquivos_jpeg_ordenados = sorted(arquivos_jpeg, key=lambda x: extrair_numero(x))
 
-    # abre a imagem
-    img = Image.open(os.path.join(path, file))
-    # renomeia o arquivo com o índice (começando de 1) e extensão png
-    new_name = f'{i+1}.png'
-    # salva a imagem com o novo nome
-    img.save(new_name)
+# Diretório de destino para os arquivos ordenados
+diretorio_destino = 'C:/Users/Weback/Documents/estevan/centelha/landing_page_sort'
 
-files_b = os.listdir(path_b)
-
-files_b.sort()
-
-for i, file in enumerate(files_b):
-    print(file)
+# Mover arquivos para o diretório de destino, mantendo a ordem
+for i, arquivo in enumerate(arquivos_jpeg_ordenados):
+    shutil.move(os.path.join(diretorio, arquivo), os.path.join(diretorio_destino, f'{i+1}.jpeg'))
